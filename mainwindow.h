@@ -3,14 +3,11 @@
 
 #include <QMainWindow>
 #include <QDebug>
-#include <QNetworkAccessManager>
-#include <QNetworkRequest>
-#include <QNetworkReply>
 #include <QFile>
 #include <QFileInfo>
 #include <QFileDialog>
-#include <QListWidgetItem>
 #include <QMessageBox>
+#include "checkLog.h"
 
 namespace Ui {
 class MainWindow;
@@ -26,30 +23,15 @@ public:
 
 
 private slots:
-	void downloadFileProgress(qint64 byteReceived,qint64 bytesTotal);
-	void downloadFileFinished();
-    void downloadTest();
+    void patchingProgress(int count, QString line);
+    void patchingFinished();
 
+signals:
+    void logOnPatchingProgress();
+    void logOnPatchingFinished();
 private:
 	Ui::MainWindow *ui;
 
-	QNetworkAccessManager* manager;
-
-	QString ftpAddress;
-	int ftpPort;
-	QString username;
-	QString password;
-    QString localFolder;
-
-	QNetworkReply* downloadFileListReply;
-	QNetworkReply* uploadFileListReply;
-
-	QNetworkReply* uploadFileReply;
-	QNetworkReply* downloadFileReply;
-
-	QStringList fileList;
-	QString uploadFileName;
-	QString downloadFileName;
 };
 
 #endif // MAINWINDOW_H
