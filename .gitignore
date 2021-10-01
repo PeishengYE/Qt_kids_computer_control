@@ -1,0 +1,9 @@
+*.swp
+*.o
+*.user
+moc_*
+qt_android_auto
+*.stash
+Makefile
+Qt_android_auto
+/logs
