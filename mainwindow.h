@@ -25,6 +25,7 @@ public:
 private slots:
     void patchingProgress(int count, QString line);
     void patchingFinished();
+    void warningMesg(QString errorMessage);
 
 signals:
     void logOnPatchingProgress();

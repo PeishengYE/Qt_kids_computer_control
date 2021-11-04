@@ -18,6 +18,7 @@ public:
 signals:
     void sendCounts(const int & count, const QString & line);
     void done();
+    void warningMesg(const QString &err);
 
 
 

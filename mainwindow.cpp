@@ -13,11 +13,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
 //    setWindowFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::Tool);
 //    setWindowFlags(Qt::Window | Qt::WindowTitleHint | Qt::CustomizeWindowHint);
+//setWindowFlags(Qt::WindowStaysOnTopHint)
 
     CheckLogThread * thread = new CheckLogThread();
     thread->start();
     connect(thread, SIGNAL(sendCounts(int, QString)), this, SLOT(patchingProgress(int, QString)));
     connect(thread, SIGNAL(done()), this, SLOT(patchingFinished()));
+    connect(thread, SIGNAL(warningMesg(QString)), this, SLOT(warningMesg(QString)));
 }
 
 MainWindow::~MainWindow()
@@ -26,7 +28,13 @@ MainWindow::~MainWindow()
 }
 
 
+void MainWindow::warningMesg(QString err)
+{
 
+
+    QMessageBox::warning(this, tr("Error"), err);
+
+}
 
 
 
@@ -36,9 +44,9 @@ MainWindow::~MainWindow()
 void MainWindow::patchingProgress( int count, QString line)
 {
     qDebug()<< "Slot patchingProgress() with: " << "count: " << count << "Line: " << line;
-    qint64 percentage = 100 * count / 2000;
+    qint64 percentage = 100 * count / 1000;
     ui->patchProgress->setValue((int) percentage);
-    ui->statusBar->showMessage(tr("Found kernel message %1  ").arg(line));
+    ui->statusBar->showMessage(tr("%1").arg(line));
 }
 
 void MainWindow::patchingFinished()

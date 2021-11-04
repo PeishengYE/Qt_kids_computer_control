@@ -37,22 +37,43 @@ void CheckLogThread::run()
             line = qin.readLine();
             if (line.isNull())
                 break;
-
-            if (line.trimmed().isEmpty())
+            line = line.trimmed();
+            if (line.isEmpty())
                 continue;
 
-            if (line.trimmed().contains("kernel", Qt::CaseInsensitive)){
-                qDebug() << "find one kernel line: " << line.trimmed();
+
+
+            if (line.contains("autoupdate", Qt::CaseInsensitive)){
+
+
+                if(line.contains("Critical error", Qt::CaseInsensitive)){
+                    qDebug() << "AutoUpdate with critical error: " << line;
+                    emit warningMesg(line);
+                    msleep(5000);
+                    emit done();
+                }
+
+
+                qDebug() << "AutoUpdate:" << line;
                 lineCount ++;
-                currentLine = line.trimmed();
+                currentLine = line;
                 emit sendCounts(lineCount, currentLine);
                 msleep(100);
             }
 
-            if (lineCount > 50){
+            if (lineCount > 800){
+                QString message = "800 count reched, quit now";
+                emit warningMesg(message);
+                msleep(5000);
                 emit done();
             }
         }
+
+        QString message = "File read to EOF, quit now";
+        emit warningMesg(message);
+        msleep(5000);
+        emit done();
+
         file.close();
 
         }
