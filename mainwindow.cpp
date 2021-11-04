@@ -17,6 +17,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     CheckLogThread * thread = new CheckLogThread();
     thread->start();
+
     connect(thread, SIGNAL(sendCounts(int, QString)), this, SLOT(patchingProgress(int, QString)));
     connect(thread, SIGNAL(done()), this, SLOT(patchingFinished()));
     connect(thread, SIGNAL(warningMesg(QString)), this, SLOT(warningMesg(QString)));
