@@ -37,9 +37,7 @@ void MainWindow::exitApp()
 
 void MainWindow::warningMesg(QString err)
 {
-    if(err.contains("Critical error", Qt::CaseInsensitive)){
-         quitAppTimer->start(10000);
-    }
+
 
     QMessageBox::warning(this, tr("Error"), err);
 

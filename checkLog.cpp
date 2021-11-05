@@ -61,12 +61,7 @@ void CheckLogThread::readProcessOutput(){
     if (line.contains("autoupdate", Qt::CaseInsensitive)){
 
 
-                   if(line.contains("Critical error", Qt::CaseInsensitive)){
-                       qDebug() << "AutoUpdate with critical error: " << line;
-                       emit warningMesg(line);
-                       msleep(5000);
-                       emit done();
-                   }
+
 
                     /* Read the message from golang */
                    if(line.contains("1998886", Qt::CaseInsensitive)){
