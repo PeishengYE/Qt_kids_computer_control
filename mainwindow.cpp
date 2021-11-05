@@ -18,10 +18,14 @@ MainWindow::MainWindow(QWidget *parent) :
     CheckLogThread * thread = new CheckLogThread();
     thread->start();
     quitAppTimer = new QTimer(this);
-       connect(quitAppTimer, &QTimer::timeout, this, &MainWindow::exitApp);
+    quitAppTimer->setTimerType(Qt::PreciseTimer);
+    connect(quitAppTimer, &QTimer::timeout, this, &MainWindow::exitApp);
+
+
     connect(thread, SIGNAL(sendCounts(int, QString)), this, SLOT(patchingProgress(int, QString)));
     connect(thread, SIGNAL(done()), this, SLOT(patchingFinished()));
     connect(thread, SIGNAL(warningMesg(QString)), this, SLOT(warningMesg(QString)));
+    ui->statusBar->showMessage(tr("Waiting patching process ..."));
 }
 
 MainWindow::~MainWindow()
@@ -37,9 +41,9 @@ void MainWindow::exitApp()
 
 void MainWindow::warningMesg(QString err)
 {
+      quitAppTimer->start(10000);
 
-
-    QMessageBox::warning(this, tr("Error"), err);
+    QMessageBox::warning(this, tr("Warning"), err);
 
 }
 

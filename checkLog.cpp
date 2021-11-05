@@ -67,15 +67,13 @@ void CheckLogThread::readProcessOutput(){
                    if(line.contains("1998886", Qt::CaseInsensitive)){
                        qDebug() << "Patching is done " << line;
                        emit warningMesg("Patching has finished successfully!");
-                       msleep(5000);
-                       emit done();
+
                    }
 
                    if(line.contains("1998889", Qt::CaseInsensitive)){
                        qDebug() << "Patching with error, stopped!" << line;
                        emit warningMesg("Patching with error, stopped!");
-                       msleep(5000);
-                       emit done();
+
                    }
 
                    qDebug() << "AutoUpdate:" << line;
