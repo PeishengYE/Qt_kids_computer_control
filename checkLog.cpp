@@ -4,6 +4,7 @@ CheckLogThread::CheckLogThread(QObject *parent)
     : QThread(parent)
 {
    lineCount = 0;
+   justStarted = true;
 }
 
 CheckLogThread::~CheckLogThread()
@@ -51,6 +52,12 @@ void CheckLogThread::readProcessOutput(){
     QByteArray lines = myProcess->readAll();
     QString line = QString(lines);
     qDebug().noquote() << "[*]: " << QString(lines);
+    if(justStarted){
+        qDebug().noquote() << "Just start, ignore all reading! ";
+        justStarted = false;
+        return;
+    }
+
     if (line.contains("autoupdate", Qt::CaseInsensitive)){
 
 
@@ -61,6 +68,20 @@ void CheckLogThread::readProcessOutput(){
                        emit done();
                    }
 
+                    /* Read the message from golang */
+                   if(line.contains("1998886", Qt::CaseInsensitive)){
+                       qDebug() << "Patching is done " << line;
+                       emit warningMesg("Patching has finished successfully!");
+                       msleep(5000);
+                       emit done();
+                   }
+
+                   if(line.contains("1998889", Qt::CaseInsensitive)){
+                       qDebug() << "Patching with error, stopped!" << line;
+                       emit warningMesg("Patching with error, stopped!");
+                       msleep(5000);
+                       emit done();
+                   }
 
                    qDebug() << "AutoUpdate:" << line;
                    lineCount ++;

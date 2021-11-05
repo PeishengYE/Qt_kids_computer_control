@@ -6,6 +6,7 @@
 #include <QFile>
 #include <QDebug>
 #include <QtCore/QTextStream>
+
 class CheckLogThread : public QThread
 {
     Q_OBJECT
@@ -29,8 +30,10 @@ protected:
     void run();
 
     int lineCount;
+    bool justStarted = true;
     QProcess *myProcess;
     QString currentLine;
+
 };
 
 

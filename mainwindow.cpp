@@ -17,7 +17,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     CheckLogThread * thread = new CheckLogThread();
     thread->start();
-
+    quitAppTimer = new QTimer(this);
+       connect(quitAppTimer, &QTimer::timeout, this, &MainWindow::exitApp);
     connect(thread, SIGNAL(sendCounts(int, QString)), this, SLOT(patchingProgress(int, QString)));
     connect(thread, SIGNAL(done()), this, SLOT(patchingFinished()));
     connect(thread, SIGNAL(warningMesg(QString)), this, SLOT(warningMesg(QString)));
@@ -28,10 +29,17 @@ MainWindow::~MainWindow()
 	delete ui;
 }
 
+void MainWindow::exitApp()
+{
+  QCoreApplication::quit();
+
+}
 
 void MainWindow::warningMesg(QString err)
 {
-
+    if(err.contains("Critical error", Qt::CaseInsensitive)){
+         quitAppTimer->start(10000);
+    }
 
     QMessageBox::warning(this, tr("Error"), err);
 
@@ -45,9 +53,9 @@ void MainWindow::warningMesg(QString err)
 void MainWindow::patchingProgress( int count, QString line)
 {
     qDebug()<< "Slot patchingProgress() with: " << "count: " << count << "Line: " << line;
-    qint64 percentage = 100 * count / 1000;
+    qint64 percentage = 100 * count / 2000;
     ui->patchProgress->setValue((int) percentage);
-    ui->statusBar->showMessage(tr("%1").arg(line));
+    ui->statusBar->showMessage(tr("[%1]::%2").arg(count).arg(line));
 }
 
 void MainWindow::patchingFinished()

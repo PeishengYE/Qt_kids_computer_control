@@ -6,6 +6,7 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QFileDialog>
+#include <QTimer>
 #include <QMessageBox>
 #include "checkLog.h"
 
@@ -26,12 +27,14 @@ private slots:
     void patchingProgress(int count, QString line);
     void patchingFinished();
     void warningMesg(QString errorMessage);
+    void exitApp();
 
 signals:
     void logOnPatchingProgress();
     void logOnPatchingFinished();
 private:
 	Ui::MainWindow *ui;
+    QTimer *quitAppTimer;
 
 };
 
