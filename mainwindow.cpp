@@ -9,23 +9,10 @@ MainWindow::MainWindow(QWidget *parent) :
 {
 	ui->setupUi(this);
 
-//    setAttribute(Qt::WA_TranslucentBackground);
 
-//    setWindowFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::Tool);
-//    setWindowFlags(Qt::Window | Qt::WindowTitleHint | Qt::CustomizeWindowHint);
-//setWindowFlags(Qt::WindowStaysOnTopHint)
-
-    CheckLogThread * thread = new CheckLogThread();
-    thread->start();
-    quitAppTimer = new QTimer(this);
-    quitAppTimer->setTimerType(Qt::PreciseTimer);
-    connect(quitAppTimer, &QTimer::timeout, this, &MainWindow::exitApp);
-
-
-    connect(thread, SIGNAL(sendCounts(int, QString)), this, SLOT(patchingProgress(int, QString)));
-    connect(thread, SIGNAL(done()), this, SLOT(patchingFinished()));
-    connect(thread, SIGNAL(warningMesg(QString)), this, SLOT(warningMesg(QString)));
     ui->statusBar->showMessage(tr("Waiting patching process ..."));
+
+    m_timerId = startTimer(1000);
 }
 
 MainWindow::~MainWindow()

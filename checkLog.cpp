@@ -1,13 +1,13 @@
 #include "checkLog.h"
 
-CheckLogThread::CheckLogThread(QObject *parent)
+timerThread::timerThread(QObject *parent)
     : QThread(parent)
 {
    lineCount = 0;
    justStarted = true;
 }
 
-CheckLogThread::~CheckLogThread()
+timerThread::~timerThread()
 {
 
 
@@ -16,7 +16,7 @@ CheckLogThread::~CheckLogThread()
 
 
 
-void CheckLogThread::run()
+void timerThread::run()
 {
 
         QString program = "tail";
@@ -30,7 +30,7 @@ void CheckLogThread::run()
 
          qDebug().noquote() <<"Thread started!";
 
-         connect(myProcess, &QProcess::readyReadStandardOutput, this, &CheckLogThread::readProcessOutput);
+         connect(myProcess, &QProcess::readyReadStandardOutput, this, &timerThread::readProcessOutput);
 
 
          qDebug() << "waiting for finishing... " << endl;
@@ -46,7 +46,7 @@ void CheckLogThread::run()
 
 }
 
-void CheckLogThread::readProcessOutput(){
+void timerThread::readProcessOutput(){
 
     qDebug().noquote() <<"readProcessOutput()>> ";
     QByteArray lines = myProcess->readAll();
@@ -86,7 +86,7 @@ void CheckLogThread::readProcessOutput(){
 
 }
 
-void CheckLogThread::processDead(){
+void timerThread::processDead(){
     qDebug() << "process end!";
 }
 

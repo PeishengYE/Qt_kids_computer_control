@@ -35,6 +35,7 @@ signals:
 private:
 	Ui::MainWindow *ui;
     QTimer *quitAppTimer;
+    int m_timerId;
 
 };
 

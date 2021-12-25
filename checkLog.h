@@ -7,13 +7,13 @@
 #include <QDebug>
 #include <QtCore/QTextStream>
 
-class CheckLogThread : public QThread
+class timerThread : public QThread
 {
     Q_OBJECT
 
 public:
-    CheckLogThread(QObject *parent = 0);
-    ~CheckLogThread();
+    timerThread(QObject *parent = 0);
+    ~timerThread();
 
 
 

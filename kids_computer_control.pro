@@ -8,7 +8,7 @@ QT       += core gui network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = Security_patching_progress
+TARGET = kids_computer_control
 TEMPLATE = app
 
 # The following define makes your compiler emit warnings if you use
