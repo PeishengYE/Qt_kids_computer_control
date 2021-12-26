@@ -37,15 +37,19 @@ MainWindow::MainWindow(QWidget *parent) :
 void MainWindow::readFortune()
 {
     qDebug()<< "readFortune()>> " ;
-    in.startTransaction();
+        QTcpSocket* client = qobject_cast<QTcpSocket*>(QObject::sender());
+    QString data = QString(client->readAll());
+    qDebug()<< "readFortune()>> "<< data ;
 
-        QString nextFortune;
-        in >> nextFortune;
-        qDebug()<< "readFortune()>> "<< nextFortune ;
-        if (!in.commitTransaction()){
-            qDebug()<< "readFortune()>> done" ;
-             return;
-        }
+//    in.startTransaction();
+
+//        QString nextFortune;
+//        in >> nextFortune;
+//        qDebug()<< "readFortune()>> "<< nextFortune ;
+//        if (!in.commitTransaction()){
+//            qDebug()<< "readFortune()>> done" ;
+//             return;
+//        }
 
 
 
