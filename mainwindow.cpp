@@ -9,11 +9,49 @@ MainWindow::MainWindow(QWidget *parent) :
 {
 	ui->setupUi(this);
 
-    ServerThread * serverThread = new ServerThread(this);
-    serverThread->start();
+
     ui->statusBar->showMessage(tr("Waiting patching process ..."));
-    connect(serverThread, SIGNAL(receviedMesg(QString )), this, SLOT(warningMesg(QString )));
-    m_timerId = startTimer(1000);
+    tcpServer = new QTcpServer(this);
+    if (!tcpServer->listen(QHostAddress::Any, 8005)) {
+        QMessageBox::critical(this, tr("Fortune Server"),
+                              tr("Unable to start the server: %1.")
+                              .arg(tcpServer->errorString()));
+        close();
+        return;
+    }else{
+        qDebug() << "Server has started. Listening to port 8005.";
+    }
+
+    fortunes << tr("You've been leading a dog's life. Stay off the furniture.")
+             << tr("You've got to think about tomorrow.")
+             << tr("You will be surprised by a loud noise.")
+             << tr("You will feel hungry again in another hour.")
+             << tr("You might have mail.")
+             << tr("You cannot kill time without injuring eternity.")
+             << tr("Computers are not intelligent. They only think they are.");
+    connect(tcpServer, &QTcpServer::newConnection, this, &MainWindow::sendFortune);
+
+}
+
+
+void MainWindow::sendFortune()
+{
+//! [5]
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_5_10);
+
+    out << fortunes[QRandomGenerator::global()->bounded(fortunes.size())];
+//! [4] //! [7]
+
+    QTcpSocket *clientConnection = tcpServer->nextPendingConnection();
+    connect(clientConnection, &QAbstractSocket::disconnected,
+            clientConnection, &QObject::deleteLater);
+//! [7] //! [8]
+
+    clientConnection->write(block);
+    clientConnection->disconnectFromHost();
+//! [5]
 }
 
 MainWindow::~MainWindow()

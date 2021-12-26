@@ -8,6 +8,7 @@
 #include <QFileDialog>
 #include <QTimer>
 #include <QMessageBox>
+#include <QtCore>
 #include "checkLog.h"
 #include "server.h"
 
@@ -29,6 +30,8 @@ private slots:
     void patchingFinished();
     void warningMesg(QString errorMessage);
     void exitApp();
+    void sendFortune();
+
 
 signals:
     void logOnPatchingProgress();
@@ -37,6 +40,8 @@ private:
 	Ui::MainWindow *ui;
     QTimer *quitAppTimer;
     int m_timerId;
+    QTcpServer *tcpServer = nullptr;
+    QVector<QString> fortunes;
 
 };
 

@@ -38,7 +38,8 @@ QTcpServer* ServerThread::getInternalQTcpServer(){
 }
 void ServerThread::run()
 {
-    startServer();
+    ServerThread * thread = new ServerThread();
+    thread->start();
     exec();
 }
 
