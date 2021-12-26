@@ -3,7 +3,7 @@
 ServerThread::ServerThread(QObject *parent)
          : QThread(parent)
 {
-    qRegisterMetaType<QAbstractSocket::SocketState>();
+qRegisterMetaType<QAbstractSocket::SocketState>();
 }
 
 ServerThread::~ServerThread()
@@ -30,7 +30,7 @@ void ServerThread::startServer()
 		qDebug() << "Server failed to start. Error: " + chatServer->errorString();
 	}
 
-    chatServer->waitForNewConnection();
+
 }
 
 QTcpServer* ServerThread::getInternalQTcpServer(){
@@ -63,9 +63,10 @@ void ServerThread::newClientConnection()
 	QString ipAddress = client->peerAddress().toString();
 	int port = client->peerPort();
 
-	connect(client, SIGNAL(disconnected()), this, SLOT(socketDisconnected()));
-	connect(client, SIGNAL(readyRead()),this, SLOT(socketReadReady()));
-	connect(client, SIGNAL(stateChanged(QAbstractSocket::SocketState)), this, SLOT(socketStateChanged(QAbstractSocket::SocketState)));
+    connect(client, SIGNAL(readyRead()),this, SLOT(socketReadReady()), Qt::DirectConnection);
+    connect(client, SIGNAL(disconnected()), this, SLOT(socketDisconnected()));
+
+//	connect(client, SIGNAL(stateChanged(QAbstractSocket::SocketState)), this, SLOT(socketStateChanged(QAbstractSocket::SocketState)));
 
 	allClients->push_back(client);
 
@@ -79,6 +80,7 @@ void ServerThread::socketDisconnected()
 	int port = client->peerPort();
 
 	qDebug() << "Socket disconnected from " + socketIpAddress + ":" + QString::number(port);
+    emit receviedMesg("disconntected");
 }
 
 void ServerThread::socketReadReady()
