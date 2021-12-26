@@ -26,10 +26,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
+        server.cpp \
     checkLog.cpp
 
 HEADERS += \
         mainwindow.h \
+        server.h \
     checkLog.h
 
 FORMS += \

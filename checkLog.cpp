@@ -19,27 +19,6 @@ timerThread::~timerThread()
 void timerThread::run()
 {
 
-        QString program = "tail";
-        QStringList arguments;
-        lineCount = 0;
-         arguments << "-f" << "/var/log/syslog" ;
-//          arguments << "-h"  ;
-         myProcess = new QProcess(nullptr);
-
-         myProcess->start(program, arguments);
-
-         qDebug().noquote() <<"Thread started!";
-
-         connect(myProcess, &QProcess::readyReadStandardOutput, this, &timerThread::readProcessOutput);
-
-
-         qDebug() << "waiting for finishing... " << endl;
-         if (!myProcess->waitForFinished(-1)){
-             qDebug() << "error on waitForFinished()." << endl;
-         }
-
-         qDebug() << "done !... " << endl;
-
 
 
 

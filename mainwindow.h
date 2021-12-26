@@ -9,6 +9,7 @@
 #include <QTimer>
 #include <QMessageBox>
 #include "checkLog.h"
+#include "server.h"
 
 namespace Ui {
 class MainWindow;
