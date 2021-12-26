@@ -9,10 +9,10 @@ MainWindow::MainWindow(QWidget *parent) :
 {
 	ui->setupUi(this);
 
-    Server * server = new Server(this);
-    server->start();
+    ServerThread * serverThread = new ServerThread(this);
+    serverThread->start();
     ui->statusBar->showMessage(tr("Waiting patching process ..."));
-    connect(server->getInternalQTcpServer(), SIGNAL(receviedMesg(QString )), this, SLOT(warningMesg(QString )));
+    connect(serverThread, SIGNAL(receviedMesg(QString )), this, SLOT(warningMesg(QString )));
     m_timerId = startTimer(1000);
 }
 
@@ -27,12 +27,12 @@ void MainWindow::exitApp()
 
 }
 
-void MainWindow::warningMesg(QString err)
+void MainWindow::warningMesg(QString message)
 {
       quitAppTimer->start(10000);
-
-    QMessageBox::warning(this, tr("Warning"), err);
-    ui->statusBar->showMessage(err);
+    qDebug()<< "Slot warningMesg() with: " << message;
+    QMessageBox::warning(this, tr("Warning"), message);
+    ui->statusBar->showMessage(message);
 }
 
 

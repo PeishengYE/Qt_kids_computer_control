@@ -8,14 +8,14 @@
 #include <QVector>
 #include <QDebug>
 
-class Server : public QThread
+class ServerThread : public QThread
 {
 	Q_OBJECT
 public:
-    explicit Server(QObject *parent = nullptr);
+    explicit ServerThread(QObject *parent = nullptr);
 	void startServer();
 	void sendMessageToClients(QString message);
-     ~Server();
+     ~ServerThread();
 
 
 signals:
@@ -25,12 +25,14 @@ public slots:
 	void socketDisconnected();
 	void socketReadReady();
 	void socketStateChanged(QAbstractSocket::SocketState state);
+    QTcpServer* getInternalQTcpServer();
 
 protected:
     void run();
 private:
 	QTcpServer* chatServer;
 	QVector<QTcpSocket*>* allClients;
+
 };
 
 #endif // SERVER_H

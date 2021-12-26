@@ -1,18 +1,19 @@
 #include "server.h"
 
-Server::Server(QObject *parent)
+ServerThread::ServerThread(QObject *parent)
          : QThread(parent)
 {
+    qRegisterMetaType<QAbstractSocket::SocketState>();
 }
 
-Server::~Server()
+ServerThread::~ServerThread()
 {
 
 
 
 }
 
-void Server::startServer()
+void ServerThread::startServer()
 {
 	allClients = new QVector<QTcpSocket*>;
 
@@ -32,14 +33,16 @@ void Server::startServer()
     chatServer->waitForNewConnection();
 }
 
-void Server::run()
+QTcpServer* ServerThread::getInternalQTcpServer(){
+    return chatServer;
+}
+void ServerThread::run()
 {
-    Server* myServer = new Server();
-    myServer->startServer();
+    startServer();
     exec();
 }
 
-void Server::sendMessageToClients(QString message)
+void ServerThread::sendMessageToClients(QString message)
 {
 	if (allClients->size() > 0)
 	{
@@ -53,7 +56,7 @@ void Server::sendMessageToClients(QString message)
 	}
 }
 
-void Server::newClientConnection()
+void ServerThread::newClientConnection()
 {
     qDebug() << "Socket new connection!";
 	QTcpSocket* client = chatServer->nextPendingConnection();
@@ -69,7 +72,7 @@ void Server::newClientConnection()
 	qDebug() << "Socket connected from " + ipAddress + ":" + QString::number(port);
 }
 
-void Server::socketDisconnected()
+void ServerThread::socketDisconnected()
 {
 	QTcpSocket* client = qobject_cast<QTcpSocket*>(QObject::sender());
 	QString socketIpAddress = client->peerAddress().toString();
@@ -78,7 +81,7 @@ void Server::socketDisconnected()
 	qDebug() << "Socket disconnected from " + socketIpAddress + ":" + QString::number(port);
 }
 
-void Server::socketReadReady()
+void ServerThread::socketReadReady()
 {
 	QTcpSocket* client = qobject_cast<QTcpSocket*>(QObject::sender());
 	QString socketIpAddress = client->peerAddress().toString();
@@ -91,14 +94,14 @@ void Server::socketReadReady()
     //sendMessageToClients(data);
 }
 
-void Server::socketStateChanged(QAbstractSocket::SocketState state)
+void ServerThread::socketStateChanged(QAbstractSocket::SocketState state)
 {
 	QTcpSocket* client = qobject_cast<QTcpSocket*>(QObject::sender());
 	QString socketIpAddress = client->peerAddress().toString();
 	int port = client->peerPort();
 
 	QString desc;
-/*
+
 	if (state == QAbstractSocket::UnconnectedState)
 		desc = "The socket is not connected.";
 	else if (state == QAbstractSocket::HostLookupState)
@@ -113,7 +116,7 @@ void Server::socketStateChanged(QAbstractSocket::SocketState state)
 		desc = "The socket is about to close (data may still be waiting to be written).";
 	else if (state == QAbstractSocket::ListeningState)
 		desc = "For internal use only.";
-        */
+
 
 	qDebug() << "Socket state changed (" + socketIpAddress + ":" + QString::number(port) + "): " + desc;
 }
