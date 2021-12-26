@@ -40,6 +40,8 @@ void MainWindow::readFortune()
         QTcpSocket* client = qobject_cast<QTcpSocket*>(QObject::sender());
     QString data = QString(client->readAll());
     qDebug()<< "readFortune()>> "<< data ;
+    QMessageBox::warning(this, tr("Warning"), data);
+    ui->statusBar->showMessage(data);
 
 //    in.startTransaction();
 
@@ -92,7 +94,7 @@ void MainWindow::exitApp()
 
 void MainWindow::warningMesg(QString message)
 {
-      quitAppTimer->start(10000);
+
     qDebug()<< "Slot warningMesg() with: " << message;
     QMessageBox::warning(this, tr("Warning"), message);
     ui->statusBar->showMessage(message);
