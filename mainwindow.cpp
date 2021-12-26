@@ -31,8 +31,25 @@ MainWindow::MainWindow(QWidget *parent) :
              << tr("Computers are not intelligent. They only think they are.");
     connect(tcpServer, &QTcpServer::newConnection, this, &MainWindow::sendFortune);
 
-}
 
+
+}
+void MainWindow::readFortune()
+{
+    qDebug()<< "readFortune()>> " ;
+    in.startTransaction();
+
+        QString nextFortune;
+        in >> nextFortune;
+        qDebug()<< "readFortune()>> "<< nextFortune ;
+        if (!in.commitTransaction()){
+            qDebug()<< "readFortune()>> done" ;
+             return;
+        }
+
+
+
+}
 
 void MainWindow::sendFortune()
 {
@@ -47,10 +64,14 @@ void MainWindow::sendFortune()
     QTcpSocket *clientConnection = tcpServer->nextPendingConnection();
     connect(clientConnection, &QAbstractSocket::disconnected,
             clientConnection, &QObject::deleteLater);
+    connect(clientConnection, &QIODevice::readyRead, this, &MainWindow::readFortune);
+    in.setDevice(clientConnection);
+       in.setVersion(QDataStream::Qt_4_0);
+
 //! [7] //! [8]
 
     clientConnection->write(block);
-    clientConnection->disconnectFromHost();
+    //clientConnection->disconnectFromHost();
 //! [5]
 }
 

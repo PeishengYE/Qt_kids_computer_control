@@ -9,8 +9,10 @@
 #include <QTimer>
 #include <QMessageBox>
 #include <QtCore>
-#include "checkLog.h"
-#include "server.h"
+#include <QTcpServer>
+#include <QTcpSocket>
+
+
 
 namespace Ui {
 class MainWindow;
@@ -31,6 +33,7 @@ private slots:
     void warningMesg(QString errorMessage);
     void exitApp();
     void sendFortune();
+    void readFortune();
 
 
 signals:
@@ -42,6 +45,8 @@ private:
     int m_timerId;
     QTcpServer *tcpServer = nullptr;
     QVector<QString> fortunes;
+    QDataStream in;
+
 
 };
 
