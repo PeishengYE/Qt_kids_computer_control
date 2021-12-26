@@ -10,7 +10,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui->setupUi(this);
 
 
-    ui->statusBar->showMessage(tr("Waiting patching process ..."));
+    ui->statusBar->showMessage(tr("Waiting..."));
     tcpServer = new QTcpServer(this);
     if (!tcpServer->listen(QHostAddress::Any, 8005)) {
         QMessageBox::critical(this, tr("Fortune Server"),
@@ -40,9 +40,9 @@ void MainWindow::readFortune()
         QTcpSocket* client = qobject_cast<QTcpSocket*>(QObject::sender());
     QString data = QString(client->readAll());
     qDebug()<< "readFortune()>> "<< data ;
-    QMessageBox::warning(this, tr("Warning"), data);
-    ui->statusBar->showMessage(data);
-
+//    QMessageBox::warning(this, tr("Warning"), data);
+    ui->warning->setText(data);
+client->disconnectFromHost();
 //    in.startTransaction();
 
 //        QString nextFortune;
@@ -96,7 +96,7 @@ void MainWindow::warningMesg(QString message)
 {
 
     qDebug()<< "Slot warningMesg() with: " << message;
-    QMessageBox::warning(this, tr("Warning"), message);
+//    QMessageBox::warning(this, tr("Warning"), message);
     ui->statusBar->showMessage(message);
 }
 
