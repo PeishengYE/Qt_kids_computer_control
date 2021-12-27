@@ -8,6 +8,11 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui(new Ui::MainWindow)
 {
 	ui->setupUi(this);
+    QTimer *timer = new QTimer(this);
+
+     connect(timer, SIGNAL(timeout()), this, SLOT(updateTimer()));
+
+     timer->start(1000);
 
 
     ui->statusBar->showMessage(tr("Waiting..."));
@@ -30,7 +35,7 @@ MainWindow::MainWindow(QWidget *parent) :
              << tr("You cannot kill time without injuring eternity.")
              << tr("Computers are not intelligent. They only think they are.");
     connect(tcpServer, &QTcpServer::newConnection, this, &MainWindow::sendFortune);
-
+    connect(this, SIGNAL(messageArrived(QString)), this, SLOT(warningMesg(QString)));
 
 
 }
@@ -40,21 +45,19 @@ void MainWindow::readFortune()
         QTcpSocket* client = qobject_cast<QTcpSocket*>(QObject::sender());
     QString data = QString(client->readAll());
     qDebug()<< "readFortune()>> "<< data ;
-//    QMessageBox::warning(this, tr("Warning"), data);
+
     ui->warning->setText(data);
-client->disconnectFromHost();
-//    in.startTransaction();
+    client->disconnectFromHost();
+   emit messageArrived(data);
+    qDebug()<< "readFortune()>> byebye" ;
+}
 
-//        QString nextFortune;
-//        in >> nextFortune;
-//        qDebug()<< "readFortune()>> "<< nextFortune ;
-//        if (!in.commitTransaction()){
-//            qDebug()<< "readFortune()>> done" ;
-//             return;
-//        }
-
-
-
+void MainWindow::updateTimer()
+{
+  initSeconds --;
+  if(initSeconds<=0) initSeconds = 0;
+  QString time = QDateTime::fromTime_t(initSeconds).toUTC().toString("hh:mm:ss");
+  ui->timer->setText(time);
 }
 
 void MainWindow::sendFortune()
@@ -71,10 +74,8 @@ void MainWindow::sendFortune()
     connect(clientConnection, &QAbstractSocket::disconnected,
             clientConnection, &QObject::deleteLater);
     connect(clientConnection, &QIODevice::readyRead, this, &MainWindow::readFortune);
-    in.setDevice(clientConnection);
-       in.setVersion(QDataStream::Qt_4_0);
 
-//! [7] //! [8]
+
 
     clientConnection->write(block);
     //clientConnection->disconnectFromHost();
@@ -96,8 +97,16 @@ void MainWindow::warningMesg(QString message)
 {
 
     qDebug()<< "Slot warningMesg() with: " << message;
-//    QMessageBox::warning(this, tr("Warning"), message);
     ui->statusBar->showMessage(message);
+//    QMessageBox::warning(nullptr, tr("Warning"), message);
+    QMessageBox* msgBox = new QMessageBox( this );
+       msgBox->setAttribute( Qt::WA_DeleteOnClose ); //makes sure the msgbox is deleted automatically when closed
+       msgBox->setStandardButtons( QMessageBox::Ok );
+       msgBox->setWindowTitle( tr("Warning") );
+       msgBox->setText( message );
+       msgBox->setModal( false ); // if you want it non-modal
+       msgBox->open( this, SLOT(msgBoxClosed(QAbstractButton*)) );
+
 }
 
 
@@ -105,15 +114,5 @@ void MainWindow::warningMesg(QString message)
 
 
 
-void MainWindow::patchingProgress( int count, QString line)
-{
-    qDebug()<< "Slot patchingProgress() with: " << "count: " << count << "Line: " << line;
-    qint64 percentage = 100 * count / 2000;
 
-    ui->statusBar->showMessage(tr("[%1]::%2").arg(count).arg(line));
-}
 
-void MainWindow::patchingFinished()
-{
-QCoreApplication::instance()->quit();
-}

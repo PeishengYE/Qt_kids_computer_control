@@ -28,24 +28,26 @@ public:
 
 
 private slots:
-    void patchingProgress(int count, QString line);
-    void patchingFinished();
+
+
     void warningMesg(QString errorMessage);
     void exitApp();
     void sendFortune();
     void readFortune();
+    void updateTimer();
 
 
 signals:
-    void logOnPatchingProgress();
-    void logOnPatchingFinished();
+    void messageArrived(const QString &messg);
+
 private:
 	Ui::MainWindow *ui;
     QTimer *quitAppTimer;
     int m_timerId;
     QTcpServer *tcpServer = nullptr;
     QVector<QString> fortunes;
-    QDataStream in;
+    uint initSeconds = 60*15;
+
 
 
 };
