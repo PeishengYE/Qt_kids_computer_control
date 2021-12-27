@@ -46,7 +46,7 @@ void MainWindow::readFortune()
     QString data = QString(client->readAll());
     qDebug()<< "readFortune()>> "<< data ;
 
-    ui->warning->setText(data);
+
     client->disconnectFromHost();
 
     executeCmd(data);
@@ -74,7 +74,10 @@ void MainWindow::executeCmd(QString cmdStr)
             QRegularExpressionMatch match = rx.match(cmdStr);
                           if (match.hasMatch()) {
                               QString warning = match.captured(0);
+                              warning = warning.trimmed().remove(QChar('{'), Qt::CaseInsensitive)
+                                      .remove(QChar('}'), Qt::CaseInsensitive);
                               qDebug()<< "cmd received "<< warning;
+                               ui->warning->setText(warning);
                               emit messageArrived(warning);
                           }else{
                               qDebug()<< "no matched ";
