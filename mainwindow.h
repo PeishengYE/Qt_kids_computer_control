@@ -47,6 +47,7 @@ private:
     QTcpServer *tcpServer = nullptr;
     QVector<QString> fortunes;
     uint initSeconds = 60*15;
+    bool stopCountdownTimer = false;
 
 
 

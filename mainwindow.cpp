@@ -54,10 +54,12 @@ void MainWindow::readFortune()
 
 void MainWindow::updateTimer()
 {
-  initSeconds --;
-  if(initSeconds<=0) initSeconds = 0;
-  QString time = QDateTime::fromTime_t(initSeconds).toUTC().toString("hh:mm:ss");
-  ui->timer->setText(time);
+  if(!stopCountdownTimer){
+      initSeconds --;
+      if(initSeconds== 0) stopCountdownTimer = true;
+      QString time = QDateTime::fromTime_t(initSeconds).toUTC().toString("hh:mm:ss");
+      ui->timer->setText(time);
+  }
 }
 
 void MainWindow::sendFortune()
