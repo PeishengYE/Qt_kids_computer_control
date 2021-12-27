@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Security Patching</string>
+   <string> Warning for Kids </string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <property name="styleSheet">

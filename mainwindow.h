@@ -12,7 +12,9 @@
 #include <QTcpServer>
 #include <QTcpSocket>
 
-
+#define MAGIC_NUM "889988"
+#define POWER_OFF "POWER_OFF"
+#define SHOW_MESG "SHOW_MESG"
 
 namespace Ui {
 class MainWindow;
@@ -25,6 +27,9 @@ class MainWindow : public QMainWindow
 public:
 	explicit MainWindow(QWidget *parent = 0);
 	~MainWindow();
+private:
+     void executeCmd(QString cmdStr);
+     QString runCmd(QProcess *myProcess, QString program, QStringList& arguments);
 
 
 private slots:

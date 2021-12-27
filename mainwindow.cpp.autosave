@@ -119,7 +119,7 @@ void MainWindow::updateTimer()
       QString time = QDateTime::fromTime_t(initSeconds).toUTC().toString("hh:mm:ss");
       ui->timer->setText(time);
   }
-  qDebug()<< "updateTimer()>> " ;
+//  qDebug()<< "updateTimer()>> " ;
 }
 
 void MainWindow::sendFortune()
