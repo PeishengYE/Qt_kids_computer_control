@@ -56,11 +56,11 @@ void MainWindow::readFortune()
 void MainWindow::powerOffComputer()
 {
     QProcess *myProcess = new QProcess(nullptr);
-    QString program = "ls";
+    QString program = "shutdown";
     QStringList arguments ;
-    arguments << "-l";
+    arguments << "-h";
     QString res = runCmd(myProcess,  program,  arguments);
-    qDebug()<< "cmd: "<< res;
+    qDebug()<< "cmd result: "<< res;
 }
 
 void MainWindow::showMessage(QString cmdStr)
