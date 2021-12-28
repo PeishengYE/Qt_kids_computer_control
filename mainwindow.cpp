@@ -53,38 +53,62 @@ void MainWindow::readFortune()
     qDebug()<< "readFortune()>> byebye" ;
 }
 
+void MainWindow::powerOffComputer()
+{
+    QProcess *myProcess = new QProcess(nullptr);
+    QString program = "ls";
+    QStringList arguments ;
+    arguments << "-l";
+    QString res = runCmd(myProcess,  program,  arguments);
+    qDebug()<< "cmd: "<< res;
+}
+
+void MainWindow::showMessage(QString cmdStr)
+{
+    QRegularExpression       rx("\\{.*\\}", QRegularExpression::MultilineOption
+                                | QRegularExpression::DotMatchesEverythingOption);
+    QRegularExpressionMatch match = rx.match(cmdStr);
+                  if (match.hasMatch()) {
+                      QString warning = match.captured(0);
+                      warning = warning.trimmed().remove(QChar('{'), Qt::CaseInsensitive)
+                              .remove(QChar('}'), Qt::CaseInsensitive);
+                      qDebug()<< "cmd received "<< warning;
+                       ui->warning->setText(warning);
+                      emit messageArrived(warning);
+                  }else{
+                      qDebug()<< "no matched ";
+                  }
+}
+
 void MainWindow::executeCmd(QString cmdStr)
 {
     if(cmdStr.contains(MAGIC_NUM)){
         qDebug()<< "magic found!";
         if(cmdStr.contains(POWER_OFF)){
             qDebug()<< "POWER_OFF found!";
-            QProcess *myProcess = new QProcess(nullptr);
-            QString program = "ls";
-            QStringList arguments ;
-            arguments << "-l";
-            QString res = runCmd(myProcess,  program,  arguments);
-            qDebug()<< "cmd: "<< res;
-
-        }
+            powerOffComputer();
+          }
         if(cmdStr.contains(SHOW_MESG)){
             qDebug()<< "SHOW_MESG found!";
-            QRegularExpression       rx("\\{.*\\}", QRegularExpression::MultilineOption
+            showMessage(cmdStr);
+        }
+        if(cmdStr.contains(SET_TIME_TO_POWER_OFF)){
+            QRegularExpression       rx("\\{\\s*([0-9]*)\\s*\\}", QRegularExpression::MultilineOption
                                         | QRegularExpression::DotMatchesEverythingOption);
             QRegularExpressionMatch match = rx.match(cmdStr);
                           if (match.hasMatch()) {
-                              QString warning = match.captured(0);
-                              warning = warning.trimmed().remove(QChar('{'), Qt::CaseInsensitive)
+                              QString secondsToPowerDown = match.captured(0);
+                              secondsToPowerDown = secondsToPowerDown.trimmed().remove(QChar('{'), Qt::CaseInsensitive)
                                       .remove(QChar('}'), Qt::CaseInsensitive);
-                              qDebug()<< "cmd received "<< warning;
-                               ui->warning->setText(warning);
-                              emit messageArrived(warning);
+                              qDebug()<< "Seconds to Power Down: "<< secondsToPowerDown;
+                              setInitSeconds(secondsToPowerDown.toInt());
+
                           }else{
                               qDebug()<< "no matched ";
                           }
-
-
         }
+
+
     }else{
         qDebug()<< "no Magic number! ";
     }
@@ -118,13 +142,22 @@ void MainWindow::updateTimer()
 {
   if(!stopCountdownTimer){
       initSeconds --;
-      if(initSeconds== 0) stopCountdownTimer = true;
-      QString time = QDateTime::fromTime_t(initSeconds).toUTC().toString("hh:mm:ss");
-      ui->timer->setText(time);
+      if(initSeconds == 0) {
+           stopCountdownTimer = true;
+           powerOffComputer();
+      }else{
+          QString time = QDateTime::fromTime_t(initSeconds).toUTC().toString("hh:mm:ss");
+          ui->timer->setText(time);
+      }
+
   }
-  qDebug()<< "updateTimer()>> " ;
+//  qDebug()<< "updateTimer()>> " ;
 }
 
+void MainWindow::setInitSeconds(uint input ){
+    stopCountdownTimer = false;
+   initSeconds = input;
+}
 void MainWindow::sendFortune()
 {
 //! [5]

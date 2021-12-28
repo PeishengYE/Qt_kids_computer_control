@@ -15,6 +15,7 @@
 #define MAGIC_NUM "889988"
 #define POWER_OFF "POWER_OFF"
 #define SHOW_MESG "SHOW_MESG"
+#define SET_TIME_TO_POWER_OFF "SET_TIME_TO_POWER_DOWN"
 
 namespace Ui {
 class MainWindow;
@@ -27,10 +28,14 @@ class MainWindow : public QMainWindow
 public:
 	explicit MainWindow(QWidget *parent = 0);
 	~MainWindow();
+    void powerOffComputer();
+
+    void showMessage(QString cmdstr);
+
 private:
      void executeCmd(QString cmdStr);
      QString runCmd(QProcess *myProcess, QString program, QStringList& arguments);
-
+    void setInitSeconds(uint input );
 
 private slots:
 
