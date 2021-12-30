@@ -31,11 +31,12 @@ public:
     void powerOffComputer();
 
     void showMessage(QString cmdstr);
+    void setInitSeconds(uint input );
 
 private:
      void executeCmd(QString cmdStr);
      QString runCmd(QProcess *myProcess, QString program, QStringList& arguments);
-    void setInitSeconds(uint input );
+
 
 private slots:
 

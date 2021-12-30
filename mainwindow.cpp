@@ -56,9 +56,9 @@ void MainWindow::readFortune()
 void MainWindow::powerOffComputer()
 {
     QProcess *myProcess = new QProcess(nullptr);
-    QString program = "shutdown";
+    QString program = "sudo" ;
     QStringList arguments ;
-    arguments << "-h";
+    arguments << "shutdown" << "-P";
     QString res = runCmd(myProcess,  program,  arguments);
     qDebug()<< "cmd result: "<< res;
 }
