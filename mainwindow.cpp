@@ -7,50 +7,49 @@ MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
 	ui(new Ui::MainWindow)
 {
+    const int tcpPort = 8005;
 	ui->setupUi(this);
+    setAttribute(Qt::WA_TranslucentBackground);
+    setWindowFlags(Qt::WindowStaysOnTopHint |  Qt::WindowMinimizeButtonHint
+                   | Qt::WindowMaximizeButtonHint| Qt::Tool);
+    ui->statusBar->showMessage(tr("Waiting..."));
+
+
     QTimer *timer = new QTimer(this);
-
      connect(timer, SIGNAL(timeout()), this, SLOT(updateTimer()));
-
      timer->start(1000);
 
 
-    ui->statusBar->showMessage(tr("Waiting..."));
+
     tcpServer = new QTcpServer(this);
-    if (!tcpServer->listen(QHostAddress::Any, 8005)) {
+    if (!tcpServer->listen(QHostAddress::Any, tcpPort)) {
         QMessageBox::critical(this, tr("Fortune Server"),
                               tr("Unable to start the server: %1.")
                               .arg(tcpServer->errorString()));
         close();
         return;
     }else{
-        qDebug() << "Server has started. Listening to port 8005.";
+        qDebug() << "Server has started. Listening to port " << tcpPort;
     }
 
-    fortunes << tr("You've been leading a dog's life. Stay off the furniture.")
-             << tr("You've got to think about tomorrow.")
-             << tr("You will be surprised by a loud noise.")
-             << tr("You will feel hungry again in another hour.")
-             << tr("You might have mail.")
-             << tr("You cannot kill time without injuring eternity.")
-             << tr("Computers are not intelligent. They only think they are.");
-    connect(tcpServer, &QTcpServer::newConnection, this, &MainWindow::sendFortune);
+
+    connect(tcpServer, &QTcpServer::newConnection, this, &MainWindow::handleNewSocketConnection);
     connect(this, SIGNAL(messageArrived(QString)), this, SLOT(warningMesg(QString)));
 
 
 }
-void MainWindow::readFortune()
+void MainWindow::readSocket()
 {
-    qDebug()<< "readFortune()>> " ;
+//    qDebug()<< "readSocket()>> " ;
         QTcpSocket* client = qobject_cast<QTcpSocket*>(QObject::sender());
     QString data = QString(client->readAll());
-    qDebug()<< "readFortune()>> "<< data ;
+    qDebug()<< "readSocket()>> "<< data ;
 
 
     client->disconnectFromHost();
 
     executeCmd(data);
-    qDebug()<< "readFortune()>> byebye" ;
+//    qDebug()<< "readSocket()>> byebye" ;
 }
 
 void MainWindow::powerOffComputer()
@@ -158,25 +157,24 @@ void MainWindow::setInitSeconds(uint input ){
     stopCountdownTimer = false;
    initSeconds = input;
 }
-void MainWindow::sendFortune()
+void MainWindow::handleNewSocketConnection()
 {
 //! [5]
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_5_10);
 
-    out << fortunes[QRandomGenerator::global()->bounded(fortunes.size())];
 //! [4] //! [7]
 
     QTcpSocket *clientConnection = tcpServer->nextPendingConnection();
     connect(clientConnection, &QAbstractSocket::disconnected,
             clientConnection, &QObject::deleteLater);
-    connect(clientConnection, &QIODevice::readyRead, this, &MainWindow::readFortune);
+    connect(clientConnection, &QIODevice::readyRead, this, &MainWindow::readSocket);
 
 
 
     clientConnection->write(block);
-    //clientConnection->disconnectFromHost();
+
 //! [5]
 }
 
@@ -194,7 +192,7 @@ void MainWindow::exitApp()
 void MainWindow::warningMesg(QString message)
 {
 
-    qDebug()<< "Slot warningMesg() with: " << message;
+    qDebug()<< "Showing warningMesg() with: " << message;
     ui->statusBar->showMessage(message);
     QFont font;
     font.setBold(true);
@@ -212,6 +210,9 @@ void MainWindow::warningMesg(QString message)
 }
 
 
+void MainWindow::msgBoxClosed(QAbstractButton *button) {
+    qDebug()<< "msgBoxClosed() closed " ;
+}
 
 
 
