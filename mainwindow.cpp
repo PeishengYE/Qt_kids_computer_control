@@ -55,10 +55,21 @@ void MainWindow::readSocket()
 void MainWindow::powerOffComputer()
 {
     QProcess *myProcess = new QProcess(nullptr);
+
+ #if defined(Q_OS_UNIX) || defined(Q_OS_LINUX) || defined(Q_OS_QNX)
     QString program = "sudo" ;
     QStringList arguments ;
     arguments << "shutdown" << "-P";
     QString res = runCmd(myProcess,  program,  arguments);
+
+#elif defined(Q_OS_WIN32)
+    QString program = "shutdown" ;
+    QStringList arguments ;
+    arguments << "/r" ;
+    QString res = runCmd(myProcess,  program,  arguments);
+
+#endif
+
     qDebug()<< "cmd result: "<< res;
 }
 
