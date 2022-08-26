@@ -165,8 +165,13 @@ void MainWindow::updateTimer()
 }
 
 void MainWindow::setInitSeconds(uint input ){
-    stopCountdownTimer = false;
-   initSeconds = input;
+    if(input == -1){
+        stopCountdownTimer = true;
+    }else{
+        stopCountdownTimer = false;
+        initSeconds = input;
+    }
+
 }
 void MainWindow::handleNewSocketConnection()
 {
